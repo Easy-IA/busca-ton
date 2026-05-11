@@ -1,0 +1,40 @@
+name: Monitor Ton 🕵️
+
+on:
+  schedule:
+    # Roda às :00 e :45 de cada hora (aproximadamente a cada 45 min)
+    - cron: '0,45 * * * *'
+  workflow_dispatch: # Permite rodar manualmente pelo GitHub
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configura Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: crawler/package-lock.json
+
+      - name: Instala dependências
+        run: npm ci
+        working-directory: crawler
+
+      - name: Instala Chromium (Playwright)
+        run: npx playwright install chromium --with-deps
+        working-directory: crawler
+
+      - name: Executa o crawler
+        run: npm start
+        working-directory: crawler
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
