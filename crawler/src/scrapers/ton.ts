@@ -87,7 +87,7 @@ async function extractMachines(page: Page): Promise<MachineData[]> {
   console.log('[Ton Crawler] Extraindo máquinas e preços...');
 
   // Aguarda os cards de máquinas aparecerem
-  await page.waitForSelector('div.snap-center', { timeout: 15000 }).catch(() => null);
+  await page.waitForSelector('.snap-center', { timeout: 15000 }).catch(() => null);
 
   return page.evaluate(() => {
     const results: { name: string; price_vista: string | null; price_parcelado: string | null }[] = [];
@@ -96,37 +96,32 @@ async function extractMachines(page: Page): Promise<MachineData[]> {
     const cards = document.querySelectorAll('div.snap-center');
 
     cards.forEach(card => {
-      // Nome da máquina: h2 ou h3 ou div com texto T1/T2/T3
-      const nameEl =
-        card.querySelector('h2') ??
-        card.querySelector('h3') ??
-        card.querySelector('[class*="title"]');
-
+      // Nome da máquina: h6 (ex: "T3 Smart", "T3", "T2", "T1")
+      const nameEl = card.querySelector('h6');
       const rawName = nameEl?.textContent?.trim() ?? '';
-      // Filtra apenas os cards que são de maquininhas (T1, T2, T3, etc.)
-      if (!/\bT[1-4]\b/i.test(rawName)) return;
+      if (!rawName || !/T[1-4]/i.test(rawName)) return;
 
       const name = rawName.replace(/\s+/g, ' ').trim();
       if (seen.has(name)) return;
       seen.add(name);
 
+      // Preço à vista: p com classes text-brand e font-bold (preço com desconto em verde)
+      const vistaEl = card.querySelector('p.text-brand.font-bold');
+      const price_vista = vistaEl?.textContent?.trim() ?? null;
+
+      // Preço parcelado: a div.flex.text-brand contém os dígitos separados
+      // Ou busca por texto com "x de R$" no card inteiro
       const cardText = card.textContent ?? '';
+      const parceladoMatch = cardText.match(/\d{1,2}x\s*(?:de\s*)?R\$\s*[\d.,]+/i);
+      const price_parcelado = parceladoMatch ? parceladoMatch[0].trim() : null;
 
-      // Preço à vista: ex "R$ 191,88"
-      const vistaMatch = cardText.match(/R\$\s*\d{1,4}[.,]\d{2}(?!\s*\/)/);
-      // Preço parcelado: ex "12x R$ 15,99" ou "12x de R$ 15,99"
-      const parceladoMatch = cardText.match(/\d{1,2}x(?:\s*de)?\s*R\$\s*[\d.,]+/i);
-
-      results.push({
-        name,
-        price_vista: vistaMatch ? vistaMatch[0].trim() : null,
-        price_parcelado: parceladoMatch ? parceladoMatch[0].trim() : null,
-      });
+      results.push({ name, price_vista, price_parcelado });
     });
 
     return results;
   });
 }
+
 
 async function extractRates(page: Page): Promise<RateData[]> {
   console.log('[Ton Crawler] Extraindo taxas de todos os planos...');
