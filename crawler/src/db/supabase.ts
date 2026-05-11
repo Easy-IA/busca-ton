@@ -1,4 +1,5 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import ws from 'ws';
 import { TonSnapshot } from '../scrapers/ton';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -22,7 +23,9 @@ function getClient(): SupabaseClient {
       throw new Error('SUPABASE_URL e SUPABASE_SERVICE_KEY precisam estar no .env');
     }
 
-    _client = createClient(url, key);
+    _client = createClient(url, key, {
+      realtime: { transport: ws },
+    });
   }
   return _client;
 }
