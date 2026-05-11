@@ -1,6 +1,12 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import ws from 'ws';
 import { TonSnapshot } from '../scrapers/ton';
+
+// Polyfill WebSocket para Node.js < 22 (necessário para o Supabase)
+import ws from 'ws';
+if (!globalThis.WebSocket) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (globalThis as any).WebSocket = ws;
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -23,10 +29,7 @@ function getClient(): SupabaseClient {
       throw new Error('SUPABASE_URL e SUPABASE_SERVICE_KEY precisam estar no .env');
     }
 
-    _client = createClient(url, key, {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      realtime: { transport: ws as any },
-    });
+    _client = createClient(url, key);
   }
   return _client;
 }
