@@ -24,7 +24,8 @@ function getClient(): SupabaseClient {
     }
 
     _client = createClient(url, key, {
-      realtime: { transport: ws },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      realtime: { transport: ws as any },
     });
   }
   return _client;
