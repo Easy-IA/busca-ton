@@ -178,8 +178,7 @@ body {
   background: var(--grad); opacity: 0; transition: opacity .2s;
 }
 
-.stat-card:hover { border-color: var(--border-hi); transform: translateY(-2px); }
-.stat-card:hover::after { opacity: 1; }
+/* stat-card não é clicável — sem hover */
 
 .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
 
@@ -250,7 +249,6 @@ body {
 
 @keyframes fadeSlide { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:none} }
 .change-item:last-child { border-bottom: none; }
-.change-item:hover { background: var(--bg-hover); }
 
 .change-icon {
   width: 32px; height: 32px; border-radius: 7px;
@@ -305,7 +303,7 @@ body {
   padding: 10px 13px; display: flex; align-items: center; justify-content: space-between; gap: 10px;
   transition: border-color .18s;
 }
-.machine-card:hover { border-color: var(--border-hi); }
+/* machine-card não é clicável */
 
 .machine-name { font-size: .8rem; font-weight: 700; display: flex; align-items: center; gap: 6px; }
 .machine-name::before { content: '🖥️'; font-size: .85rem; }
@@ -327,7 +325,6 @@ body {
   transition: background .12s;
 }
 .rate-row:last-child { border-bottom: none; }
-.rate-row:hover { background: var(--bg-hover); }
 
 .rate-info { display: flex; align-items: center; gap: 7px; }
 .rate-category { color: var(--text-1); font-weight: 500; }
@@ -342,7 +339,6 @@ body {
 /* ─── Promo items ────────────────────────────────────────────────────────────── */
 .promo-item { padding: 10px 16px; border-bottom: 1px solid var(--border); transition: background .12s; }
 .promo-item:last-child { border-bottom: none; }
-.promo-item:hover { background: var(--bg-hover); }
 .promo-location { font-size: .6rem; color: var(--accent); font-weight: 700; text-transform: uppercase; letter-spacing: .7px; margin-bottom: 3px; }
 .promo-text { font-size: .76rem; color: var(--text-2); line-height: 1.45; }
 
@@ -376,7 +372,6 @@ body {
 
 .history-table td { padding: 9px 16px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .history-table tbody tr:last-child td { border-bottom: none; }
-.history-table tbody tr:hover td { background: var(--bg-hover); }
 
 .row-latest td { background: #00e5a005; }
 .row-latest td:first-child { border-left: 2px solid var(--accent); }
