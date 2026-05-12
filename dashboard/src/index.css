@@ -418,3 +418,75 @@ body {
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MOBILE  ≤ 768px — troca viewport-lock por scroll natural
+   ═══════════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  :root { font-size: 13px; }
+
+  /* ── Desfaz o viewport-lock no mobile ── */
+  html, body          { height: auto; overflow: auto; }
+  #root               { height: auto; overflow: auto; }
+  .app                { height: auto; min-height: 100vh; overflow: visible; }
+  .main               { flex: none; overflow: visible; padding: 10px 0 24px; display: block; }
+  .main > .container  { flex: none; display: block; }
+  .page               { height: auto; overflow: visible; display: flex; flex-direction: column; gap: 10px; }
+  .history-page       { height: auto; overflow: visible; }
+  .main-grid          { flex: none; overflow: visible; height: auto; display: flex; flex-direction: column; gap: 10px; }
+  .panel              { min-height: auto; }
+  .panel-body         { max-height: 380px; overflow-y: auto; flex: none; }
+  .history-panel      { min-height: auto; }
+  .history-table-wrap { max-height: 60vh; }
+
+  /* ── Container mais estreito ── */
+  .container { padding: 0 12px; }
+
+  /* ── Header: 2 linhas ── */
+  .header-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0;
+    justify-content: space-between;
+  }
+
+  /* linha 1: logo + live badge */
+  .logo          { order: 1; }
+  .header-right  { order: 2; gap: 8px; }
+  .last-check    { display: none; }          /* esconde "Última checagem" */
+  .logo-sub      { display: none; }          /* esconde subtítulo */
+
+  /* linha 2: nav ocupa toda a largura */
+  .nav-tabs {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    justify-content: center;
+  }
+
+  .nav-tab { padding: 6px 14px; font-size: .75rem; }
+
+  /* ── Stats 2x2 compacto ── */
+  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  .stat-card  { padding: 10px 12px; }
+  .stat-value { font-size: 1.5rem; letter-spacing: -.8px; }
+  .stat-trend { display: none; }
+  .stat-icon-wrap { width: 26px; height: 26px; font-size: 12px; }
+
+  /* ── Logo menor ── */
+  .logo-icon { width: 30px; height: 30px; font-size: 15px; }
+  .logo-title { font-size: .82rem; }
+
+  /* ── Histórico: stats em coluna ── */
+  .history-hero { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* ── Live badge compacto ── */
+  .live-badge { padding: 4px 9px; font-size: .68rem; }
+}
+
+@media (max-width: 400px) {
+  .history-hero { grid-template-columns: 1fr; }
+  .stats-grid   { grid-template-columns: repeat(2, 1fr); }
+  .nav-tab      { padding: 5px 10px; font-size: .72rem; }
+}
