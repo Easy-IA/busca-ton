@@ -28,7 +28,10 @@ async function main(): Promise<void> {
 
     const changes = diffSnapshots(lastSnapshot, newSnapshot);
 
-    // 4. Se mudou algo, registra e notifica
+    // 4. Sempre salva o novo snapshot (para registrar a checagem)
+    await saveSnapshot(newSnapshot);
+
+    // 5. Se mudou algo, registra e notifica
     if (changes.length > 0) {
       console.log(`[Monitor Ton] 🚨 ${changes.length} mudança(s) detectada(s)!`);
       changes.forEach(c => {
@@ -36,7 +39,6 @@ async function main(): Promise<void> {
       });
 
       await saveChanges(changes);
-      await saveSnapshot(newSnapshot);
       await notifyTelegram(changes);
     } else {
       console.log('[Monitor Ton] ✅ Nenhuma mudança detectada.');
