@@ -360,34 +360,64 @@ function HistoricoPage({
                 </tr>
               </thead>
               <tbody>
-                {allSnapshots.map((s, i) => (
-                  <tr key={s.id} className={i === 0 ? 'row-latest' : ''}>
-                    <td className="row-num">{total - i}</td>
-                    <td className="row-time">{formatTime(s.captured_at)}</td>
-                    <td className="row-ago">{timeAgo(s.captured_at)}</td>
-                    <td className="row-count">
-                      <span className={`count-badge ${(s.machines?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
-                        {s.machines?.length ?? 0}
-                      </span>
-                    </td>
-                    <td className="row-count">
-                      <span className={`count-badge ${(s.rates?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
-                        {s.rates?.length ?? 0}
-                      </span>
-                    </td>
-                    <td className="row-count">
-                      <span className={`count-badge ${(s.promotions?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
-                        {s.promotions?.length ?? 0}
-                      </span>
-                    </td>
-                    <td className="row-status">
-                      {i === 0
-                        ? <span className="status-badge latest">Mais recente</span>
-                        : <span className="status-badge ok">OK</span>
-                      }
-                    </td>
-                  </tr>
-                ))}
+                {allSnapshots.reduce<React.ReactNode[]>((acc, s, i) => {
+                  const toDay = (iso: string) =>
+                    new Date(iso).toLocaleDateString('pt-BR', {
+                      timeZone: 'America/Sao_Paulo',
+                      day: '2-digit', month: '2-digit', year: '2-digit',
+                    });
+
+                  const day     = toDay(s.captured_at);
+                  const prevDay = i > 0 ? toDay(allSnapshots[i - 1].captured_at) : null;
+
+                  // Injeta separador quando o dia muda
+                  if (i === 0 || day !== prevDay) {
+                    const weekday = new Date(s.captured_at).toLocaleDateString('pt-BR', {
+                      timeZone: 'America/Sao_Paulo',
+                      weekday: 'long',
+                    });
+                    acc.push(
+                      <tr key={`sep-${day}`} className="date-sep-row">
+                        <td colSpan={7}>
+                          <span className="date-sep-label">
+                            📅 {weekday.charAt(0).toUpperCase() + weekday.slice(1)}, {day}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  }
+
+                  acc.push(
+                    <tr key={s.id} className={i === 0 ? 'row-latest' : ''}>
+                      <td className="row-num">{total - i}</td>
+                      <td className="row-time">{formatTime(s.captured_at)}</td>
+                      <td className="row-ago">{timeAgo(s.captured_at)}</td>
+                      <td className="row-count">
+                        <span className={`count-badge ${(s.machines?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
+                          {s.machines?.length ?? 0}
+                        </span>
+                      </td>
+                      <td className="row-count">
+                        <span className={`count-badge ${(s.rates?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
+                          {s.rates?.length ?? 0}
+                        </span>
+                      </td>
+                      <td className="row-count">
+                        <span className={`count-badge ${(s.promotions?.length ?? 0) > 0 ? 'ok' : 'zero'}`}>
+                          {s.promotions?.length ?? 0}
+                        </span>
+                      </td>
+                      <td className="row-status">
+                        {i === 0
+                          ? <span className="status-badge latest">Mais recente</span>
+                          : <span className="status-badge ok">OK</span>
+                        }
+                      </td>
+                    </tr>
+                  );
+                  return acc;
+                }, [])}
+
               </tbody>
             </table>
           )}
