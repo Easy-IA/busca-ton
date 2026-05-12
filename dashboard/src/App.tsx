@@ -322,7 +322,6 @@ function HistoricoPage({
 }) {
   const total     = allSnapshots.length;
   const comDados  = allSnapshots.filter(s => (s.rates?.length ?? 0) > 0).length;
-  const semMaquinas = allSnapshots.filter(s => (s.machines?.length ?? 0) === 0).length;
 
   return (
     <div className="history-page">
