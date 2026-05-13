@@ -250,6 +250,13 @@ body {
 @keyframes fadeSlide { from{opacity:0;transform:translateY(-5px)} to{opacity:1;transform:none} }
 .change-item:last-child { border-bottom: none; }
 
+/* Separador de data no feed */
+.feed-date-sep {
+  padding: 8px 16px 4px;
+  border-top: 1px solid var(--border-hi);
+}
+.feed-date-sep:first-child { border-top: none; }
+
 .change-icon {
   width: 32px; height: 32px; border-radius: 7px;
   display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;

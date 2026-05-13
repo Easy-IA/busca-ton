@@ -210,27 +210,52 @@ function DashboardPage({
                 <div className="empty-icon">✅</div>
                 Nenhuma mudança detectada ainda.<br />O monitor está de olho!
               </div>
-            ) : changes.map(c => {
-              const type = getChangeType(c.field);
-              return (
-                <div key={c.id} className="change-item">
-                  <div className={`change-icon ${type}`}>{TYPE_ICONS[type]}</div>
-                  <div className="change-body">
-                    <div className="change-label">{parseFieldLabel(c.field)}</div>
-                    <div className="change-diff">
-                      {c.old_value !== '(não existia)' && (
-                        <><span className="val-old">{c.old_value.slice(0, 55)}</span>
-                        <span className="val-arrow">→</span></>
-                      )}
-                      <span className="val-new">{c.new_value.slice(0, 55)}</span>
+            ) : changes.reduce<React.ReactNode[]>((acc, c, i) => {
+                const toDay = (iso: string) =>
+                  new Date(iso).toLocaleDateString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo',
+                    day: '2-digit', month: '2-digit', year: '2-digit',
+                  });
+
+                const day     = toDay(c.detected_at);
+                const prevDay = i > 0 ? toDay(changes[i - 1].detected_at) : null;
+
+                // Injeta separador quando o dia muda
+                if (i === 0 || day !== prevDay) {
+                  const weekday = new Date(c.detected_at).toLocaleDateString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo', weekday: 'long',
+                  });
+                  acc.push(
+                    <div key={`sep-${day}`} className="feed-date-sep">
+                      <span className="date-sep-label">
+                        📅 {weekday.charAt(0).toUpperCase() + weekday.slice(1)}, {day}
+                      </span>
                     </div>
-                    <div className="change-meta">
-                      <span className="change-time">{formatTime(c.detected_at)}</span>
+                  );
+                }
+
+                const type = getChangeType(c.field);
+                acc.push(
+                  <div key={c.id} className="change-item">
+                    <div className={`change-icon ${type}`}>{TYPE_ICONS[type]}</div>
+                    <div className="change-body">
+                      <div className="change-label">{parseFieldLabel(c.field)}</div>
+                      <div className="change-diff">
+                        {c.old_value !== '(não existia)' && (
+                          <><span className="val-old">{c.old_value.slice(0, 55)}</span>
+                          <span className="val-arrow">→</span></>
+                        )}
+                        <span className="val-new">{c.new_value.slice(0, 55)}</span>
+                      </div>
+                      <div className="change-meta">
+                        <span className="change-time">{formatTime(c.detected_at)}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+                return acc;
+              }, [])}
+
           </div>
         </div>
 
